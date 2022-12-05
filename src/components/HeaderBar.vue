@@ -21,6 +21,12 @@
                 :class="{ activeButton: state === 2 }">
                 Readings Page
               </button>
+              <button
+              class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              @click="submitChangeState(3)"
+              :class="{ activeButton: state === 3 }">
+              Sensors Page
+              </button>
             </div>
           </div>
         </div>
