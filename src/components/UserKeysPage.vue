@@ -33,7 +33,7 @@
                 <tr
                   class="hover:bg-gray-700"
                   v-for="key in keyArray"
-                  v-bind:key="key">
+                  v-bind:key="key.id">
                   <td
                     class="py-4 px-6 text-sm font-medium text-white whitespace-nowrap">
                     {{ key.id }}
@@ -67,7 +67,6 @@ let keyArray: keyType[] = [];
 export default defineComponent({
   data() {
     return {
-      test: "Test",
       keyArray: keyArray,
     };
   },

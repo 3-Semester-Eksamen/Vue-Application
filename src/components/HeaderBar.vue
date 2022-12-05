@@ -9,33 +9,16 @@
           </div>
           <div class="">
             <div class="flex space-x-4">
-              <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
               <button
-                href="#"
                 class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                :class="{ activeButton: state === 1 }"
-                @click="submitChangeState(1)">
-                Index
-              </button>
-              <button
-                href="#"
-                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                @click="submitChangeState(2)"
-                :class="{ activeButton: state === 2 }">
+                @click="submitChangeState(1)"
+                :class="{ activeButton: state === 1 }">
                 Key List
               </button>
               <button
-                href="#"
                 class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                @click="submitChangeState(3)"
-                :class="{ activeButton: state === 3 }">
-                Admin Page
-              </button>
-              <button
-                href="#"
-                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                @click="submitChangeState(4)"
-                :class="{ activeButton: state === 4 }">
+                @click="submitChangeState(2)"
+                :class="{ activeButton: state === 2 }">
                 Readings Page
               </button>
             </div>
