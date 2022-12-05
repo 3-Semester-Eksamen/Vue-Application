@@ -2,8 +2,8 @@
   <div class="app">
     <div class="bg-gray">
       <HeaderBar @toggle="switchView" />
-      <UserKeysPage v-if="state == 1" />
-      <ReadingsPage v-if="state == 2" />
+      <UserKeysPage v-if="state == 1" :keys="keyArray" @updateKeys="updateKeys"/>
+      <ReadingsPage v-if="state == 2" :readings="readingArray" @updateReadings="updateReadings"/>
     </div>
   </div>
 </template>
@@ -13,13 +13,13 @@ import { defineComponent } from "vue";
 import UserKeysPage from "./components/UserKeysPage.vue";
 import ReadingsPage from "./components/ReadingsPage.vue"
 import HeaderBar from "./components/HeaderBar.vue";
+import type { readingType } from "./types/readingType"
+import type { keyType } from "./types/keyType";
+let readings: readingType[] = []
+let keys: keyType[] = []
 export default defineComponent({
   name: "App",
   // type inference enabled
-  props: {
-    name: String,
-    msg: { type: String, required: true },
-  },
   components: {
     HeaderBar,
     UserKeysPage,
@@ -28,13 +28,20 @@ export default defineComponent({
   data() {
     return {
       state: 1,
-      msg: "Hi",
+      readingArray: readings,
+      keyArray: keys
     };
   },
   methods: {
     switchView(num: number) {
       this.state = num;
     },
+    updateKeys(keys: keyType[]){
+      this.keyArray = keys
+    },
+    updateReadings(readings: readingType[]){
+      this.readingArray = readings
+    }
   },
 });
 </script>

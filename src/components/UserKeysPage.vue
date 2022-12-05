@@ -61,13 +61,13 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
+import type { PropType } from "vue"
 import type { keyType } from "../types/keyType";
 import axios from "axios";
-let keyArray: keyType[] = [];
 export default defineComponent({
   data() {
     return {
-      keyArray: keyArray,
+      keyArray: this.keys,
     };
   },
   methods: {
@@ -75,10 +75,20 @@ export default defineComponent({
       let url = "https://localhost:7220/api/Keys";
       let response = await axios.get(url);
       this.keyArray = response.data;
+      this.$emit("updateKeys", this.keyArray)
     },
   },
   mounted() {
-    this.getKeys();
+    if(!this.keyArray.length){
+      this.getKeys()
+      console.log("Getting keys")
+    }
   },
+  props:{
+    keys:{
+      required: true,
+      type: Object as PropType<keyType[]>
+    }
+  }
 });
 </script>
