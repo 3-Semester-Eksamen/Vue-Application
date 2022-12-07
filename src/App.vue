@@ -4,7 +4,7 @@
       <HeaderBar @toggle="switchView" />
       <UserKeysPage v-if="state == 1" :keys="keyArray" @updateKeys="updateKeys"/>
       <ReadingsPage v-if="state == 2" :readings="readingArray" @updateReadings="updateReadings"/>
-      <SensorsPage v-if="state == 3" :sensors="sensorArray" @updateSensors="updateSensors"/>
+      <SensorsPage v-if="state == 3" :sensors="assignedSensorArray" :unassignedSensors="unassignedSensorArray" @updateSensors="updateSensors"/>
     </div>
   </div>
 </template>
@@ -20,7 +20,8 @@ import type { keyType } from "./types/keyType"
 import type { sensorType } from "./types/sensorType" 
 let readings: readingType[] = []
 let keys: keyType[] = []
-let sensors: sensorType[] = []
+let assignedSensors: sensorType[] = []
+let unassignedSensors: sensorType[] = []
 export default defineComponent({
   name: "App",
   // type inference enabled
@@ -35,7 +36,8 @@ export default defineComponent({
       state: 1,
       readingArray: readings,
       keyArray: keys,
-      sensorArray: sensors
+      assignedSensorArray: assignedSensors,
+      unassignedSensorArray: unassignedSensors
     };
   },
   methods: {
@@ -48,8 +50,9 @@ export default defineComponent({
     updateReadings(readings: readingType[]){
       this.readingArray = readings
     },
-    updateSensors(sensors: sensorType[]){
-      this.sensorArray = sensors
+    updateSensors(assignedSensors: sensorType[], unassignedSensors: sensorType[]){
+      this.assignedSensorArray = assignedSensors
+      this.unassignedSensorArray = unassignedSensors
     }
   },
 });
