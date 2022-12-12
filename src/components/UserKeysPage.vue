@@ -27,6 +27,7 @@
                     class="py-3 px-6 text-xs font-medium tracking-wider text-left text-white">
                     Phone
                   </th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody class="bg-gray-800 divide-y divide-gray-700">
@@ -34,22 +35,8 @@
                   class="hover:bg-gray-700"
                   v-for="key in keyArray"
                   v-bind:key="key.id">
-                  <td
-                    class="py-4 px-6 text-sm font-medium text-white whitespace-nowrap">
-                    {{ key.id }}
-                  </td>
-                  <td
-                    class="py-4 px-6 text-sm font-medium text-white whitespace-nowrap">
-                    {{ key.name }}
-                  </td>
-                  <td
-                    class="py-4 px-6 text-sm font-medium text-white whitespace-nowrap">
-                    {{ key.email }}
-                  </td>
-                  <td
-                    class="py-4 px-6 text-sm font-medium text-white whitespace-nowrap">
-                    {{ key.phone }}
-                  </td>
+                  <UserKeysAssignedRow :keyObj="key" @deleteKey="deleteKey" v-if="key.name !== `Unassigned`"/>
+                  <UserKeysUnassignedRow :keyObj="key" @deleteKey="deleteKey" v-else @updateKey="updateKey"/>
                 </tr>
               </tbody>
             </table>
@@ -63,6 +50,8 @@
 import { defineComponent } from "vue";
 import type { PropType } from "vue"
 import type { keyType } from "../types/keyType";
+import  UserKeysAssignedRow  from "../components/organism/UserKeysAssignedRow.vue"
+import  UserKeysUnassignedRow  from "../components/organism/UserKeysUnassignedRow.vue"
 import axios from "axios";
 export default defineComponent({
   data() {
@@ -72,11 +61,22 @@ export default defineComponent({
   },
   methods: {
     async getKeys() {
-      let url = "https://localhost:7220/api/Keys";
-      let response = await axios.get(url);
+      const url = "https://localhost:7220/api/Keys";
+      const response = await axios.get(url);
       this.keyArray = response.data;
       this.$emit("updateKeys", this.keyArray)
     },
+    async deleteKey(keyToDel: keyType){
+      const url = `https://localhost:7220/api/Keys/${keyToDel.id}`
+      const response = await axios.delete(url)
+      await this.getKeys()
+    },
+    async updateKey(keyToUpd: keyType){
+      console.log("UpdateKeys called")
+      const url = `https://localhost:7220/api/Keys/${keyToUpd.id}`
+      const response = await axios.put(url, keyToUpd)
+      await this.getKeys()
+    }
   },
   mounted() {
     if(!this.keyArray.length){
@@ -89,6 +89,10 @@ export default defineComponent({
       required: true,
       type: Object as PropType<keyType[]>
     }
+  },
+  components:{
+    UserKeysAssignedRow,
+    UserKeysUnassignedRow
   }
 });
 </script>

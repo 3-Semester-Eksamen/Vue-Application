@@ -1,18 +1,23 @@
 <template>
   <div class="w-8/12 mx-auto">
-    <div class="flex flex-col">
+    <div class="flex flex-col" v-if="sensorArray.length">
       <div class="overflow-x-auto sm:rounded-lg">
         <div class="inline-block min-w-full align-middle">
           <div class="overflow-hidden">
             <div class="my-4 grid grid-cols-12">
-              <div class="col-span-1"></div>
               <div class="col-span-3 inline-flex">
-                <input type="text" placeholder="Name or MacAddress" v-model="filterValue">
-                <button class="bg-green-700 text-gray-300 hover:bg-gray-700 hover:text-white px-3 rounded-md text-sm font-medium py-2"
-                @click="filterByInput(filterValue)">Filter</button>
+                <input
+                  type="text"
+                  placeholder="Name or MacAddress"
+                  v-model="filterValue"
+                  class="pl-4" />
+                <button
+                  class="bg-green-700 text-gray-300 hover:bg-gray-700 hover:text-white px-3 rounded-md text-sm font-medium py-2"
+                  @click="filterByInput(filterValue)">
+                  Filter
+                </button>
               </div>
-              <div class="col-span-6"></div>
-              <div>11</div>
+              <div></div>
             </div>
             <table
               class="min-w-full divide-y divide-gray-700 table-fixed grid grid-cols-5">
@@ -23,11 +28,11 @@
                     Assigned Name
                   </th>
                   <th></th>
-                  <th></th>
                   <th
                     class="py-3 px-6 text-xs font-medium tracking-wider text-left text-white col-span-1">
                     MAC-Address
                   </th>
+                  <th></th>
                   <th></th>
                 </tr>
               </thead>
@@ -36,26 +41,11 @@
                   class="hover:bg-gray-700 grid grid-cols-5"
                   v-for="sensor in sensorArray"
                   v-bind:key="sensor.macAddress">
-                  <td
-                    class="py-4 px-6 text-sm font-medium text-white whitespace-nowrap col-span-1">
-                    {{ sensor.name }}
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td
-                    class="py-4 px-6 text-sm font-medium text-white whitespace-nowrap col-span-1">
-                    {{ sensor.macAddress }}
-                  </td>
-                  <td class="py-2 px-6 text-sm font-medium text-white whitespace-nowrap col-span-1">
-                    <button
-                    class="bg-green-700 text-gray-300 hover:bg-gray-700 hover:text-white px-3 rounded-md text-sm font-medium py-2"
-                    @click="deleteSensor"
-                    >Rediger</button>
-                    <button 
-                    class="bg-red-700 text-gray-300 hover:bg-gray-700 hover:text-white px-3 rounded-md text-sm font-medium py-2"
-                    @click="editSensor(sensor)"
-                    >Delete</button>
-                  </td>
+                  <sensorTableEditRow
+                    :sensor="sensor"
+                    class="w-full"
+                    @updateSensor="editSensor"
+                    @deleteSensor="deleteSensor" />
                 </tr>
               </tbody>
             </table>
@@ -63,7 +53,7 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-col mt-12">
+    <div class="flex flex-col mt-12" v-if="unassignedSensors.length">
       <div class="overflow-x-auto sm:rounded-lg">
         <div class="inline-block min-w-full align-middle">
           <div class="overflow-hidden">
@@ -87,15 +77,11 @@
                   class="hover:bg-gray-700 grid grid-cols-5"
                   v-for="sensor in unassignedArray"
                   v-bind:key="sensor.macAddress">
-                  <td
-                    class="py-4 px-6 text-sm font-medium text-white whitespace-nowrap col-span-2">
-                    {{ sensor.name }}
-                  </td>
-                  <td
-                    class="py-4 px-6 text-sm font-medium text-white whitespace-nowrap col-span-2">
-                    {{ sensor.macAddress }}
-                  </td>
-                  <td></td>
+                  <sensorTableUnassignedRow
+                    :sensor="sensor"
+                    class="w-full"
+                    @updateSensor="editSensor"
+                    @deleteSensor="deleteSensor" />
                 </tr>
               </tbody>
             </table>
@@ -110,14 +96,21 @@ import { defineComponent } from "vue"
 import type { sensorType } from "../types/sensorType"
 import type { PropType } from "vue"
 import axios from "axios"
+import sensorTableEditRow from "./organism/sensorTableEditRow.vue"
+import sensorTableUnassignedRow from "./organism/sensorTableUnassignedRow.vue"
 
 export default defineComponent({
   data() {
     return {
       sensorArray: this.sensors,
       unassignedArray: this.unassignedSensors,
-      filterValue: ''
+      filterValue: "",
+      isEditing: false,
     }
+  },
+  components: {
+    sensorTableEditRow,
+    sensorTableUnassignedRow,
   },
   props: {
     sensors: {
@@ -139,15 +132,25 @@ export default defineComponent({
       this.unassignedArray = unassginedResponse.data
       this.$emit("updateSensors", this.sensorArray, this.unassignedArray)
     },
-    async deleteSensor() {
+    async deleteSensor(sensor: sensorType) {
+      const url = "https://localhost:7220/api/Sensors"
+      sensor.name = "Unassigned"
+      const response = await axios.put(url, sensor)
+      await this.getSensors()
     },
     async editSensor(sensor: sensorType) {
-    },
-    async filterByInput(input: string){
+      const url = "https://localhost:7220/api/Sensors"
+      const response = await axios.put(url, sensor)
+      let assignedResponse = await axios.get(url)
+      this.sensorArray = assignedResponse.data
       await this.getSensors()
-      const tempArray: any = this.sensorArray.filter(s => {
+    },
+    async filterByInput(input: string) {
+      await this.getSensors()
+      const tempArray: any = this.sensorArray.filter((s) => {
         if (s.name.toLowerCase().includes(input.toLowerCase())) return true
-        else if (s.macAddress.toLowerCase().includes(input.toLowerCase())) return true
+        else if (s.macAddress.toLowerCase().includes(input.toLowerCase()))
+          return true
         else return false
       })
       if (tempArray) this.sensorArray = tempArray

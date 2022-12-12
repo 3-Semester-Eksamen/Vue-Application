@@ -3,7 +3,7 @@
     <div class="bg-gray">
       <HeaderBar @toggle="switchView" />
       <UserKeysPage v-if="state == 1" :keys="keyArray" @updateKeys="updateKeys"/>
-      <ReadingsPage v-if="state == 2" :readings="readingArray" @updateReadings="updateReadings"/>
+      <ReadingsPage v-if="state == 2" :readings="readingArray" :sensors="assignedSensorArray" :keys="keyArray" @updateReadings="updateReadings" @updateSensors="updateSensors" @updateKeys="updateKeys"/>
       <SensorsPage v-if="state == 3" :sensors="assignedSensorArray" :unassignedSensors="unassignedSensorArray" @updateSensors="updateSensors"/>
     </div>
   </div>
@@ -37,7 +37,7 @@ export default defineComponent({
       readingArray: readings,
       keyArray: keys,
       assignedSensorArray: assignedSensors,
-      unassignedSensorArray: unassignedSensors
+      unassignedSensorArray: unassignedSensors,
     };
   },
   methods: {
