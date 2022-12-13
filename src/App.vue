@@ -1,10 +1,11 @@
 <template>
   <div class="app">
     <div class="bg-gray">
-      <HeaderBar @toggle="switchView" @refresh="refresh"/>
+      <HeaderBar @toggle="switchView"/>
       <UserKeysPage v-if="state == 1" :keys="keyArray" @updateKeys="updateKeys"/>
       <ReadingsPage v-if="state == 2" :readings="readingArray" :sensors="assignedSensorArray" :keys="keyArray" @updateReadings="updateReadings" @updateSensors="updateSensors" @updateKeys="updateKeys"/>
       <SensorsPage v-if="state == 3" :sensors="assignedSensorArray" :unassignedSensors="unassignedSensorArray" @updateSensors="updateSensors"/>
+      <FooterBar/>
     </div>
   </div>
 </template>
@@ -15,6 +16,7 @@ import UserKeysPage from "./components/UserKeysPage.vue";
 import ReadingsPage from "./components/ReadingsPage.vue"
 import HeaderBar from "./components/HeaderBar.vue";
 import SensorsPage from "./components/SensorsPage.vue"
+import FooterBar from "./components/FooterBar.vue"
 import type { readingType } from "./types/readingType"
 import type { keyType } from "./types/keyType"
 import type { sensorType } from "./types/sensorType" 
@@ -30,6 +32,7 @@ export default defineComponent({
     UserKeysPage,
     ReadingsPage,
     SensorsPage,
+    FooterBar
   },
   data() {
     return {
@@ -54,9 +57,6 @@ export default defineComponent({
       this.assignedSensorArray = assignedSensors
       this.unassignedSensorArray = unassignedSensors
     },
-    refresh(state: number){
-
-    }
   },
 });
 </script>
