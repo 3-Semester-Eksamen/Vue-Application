@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <div class="bg-gray">
-      <HeaderBar @toggle="switchView" />
+      <HeaderBar @toggle="switchView" @refresh="refresh"/>
       <UserKeysPage v-if="state == 1" :keys="keyArray" @updateKeys="updateKeys"/>
       <ReadingsPage v-if="state == 2" :readings="readingArray" :sensors="assignedSensorArray" :keys="keyArray" @updateReadings="updateReadings" @updateSensors="updateSensors" @updateKeys="updateKeys"/>
       <SensorsPage v-if="state == 3" :sensors="assignedSensorArray" :unassignedSensors="unassignedSensorArray" @updateSensors="updateSensors"/>
@@ -53,6 +53,9 @@ export default defineComponent({
     updateSensors(assignedSensors: sensorType[], unassignedSensors: sensorType[]){
       this.assignedSensorArray = assignedSensors
       this.unassignedSensorArray = unassignedSensors
+    },
+    refresh(state: number){
+
     }
   },
 });

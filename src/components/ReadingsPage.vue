@@ -29,6 +29,14 @@
                   Filter
                 </button>
               </div>
+              <div class="col-span-5"></div>
+              <div class="">
+                <button
+                  class="bg-blue-700 text-gray-300 hover:bg-blue-900 hover:text-white px-3 rounded-md text-sm font-medium py-2 w-20"
+                  @click="getReadings">
+                  Refresh
+                </button>
+              </div>
             </div>
             <table class="min-w-full divide-y divide-gray-700 table-fixed">
               <thead class="bg-gray-700">
@@ -87,12 +95,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
-import type { PropType } from "vue"
-import type { readingType } from "../types/readingType"
-import axios from "axios"
-import type { sensorType } from "@/types/sensorType"
-import type { keyType } from "../types/keyType"
+import { defineComponent } from "vue";
+import type { PropType } from "vue";
+import type { readingType } from "../types/readingType";
+import axios from "axios";
+import type { sensorType } from "@/types/sensorType";
+import type { keyType } from "../types/keyType";
 export default defineComponent({
   data() {
     return {
@@ -103,87 +111,93 @@ export default defineComponent({
       keyArray: this.keys,
       filterByLockString: "",
       filterByUserString: "",
-      filterByTimeString: ""
-    }
+      filterByTimeString: "",
+    };
   },
   methods: {
     async getReadings() {
-      let url = "https://localhost:7220/api/Readings"
-      let response = await axios.get(url)
-      this.readingArray = response.data
-      this.$emit("updateReadings", this.readingArray)
+      let url = "https://localhost:7220/api/Readings";
+      let response = await axios.get(url);
+      this.readingArray = response.data;
+      this.$emit("updateReadings", this.readingArray);
+      this.filteredReadingArray = this.readingArray;
     },
     async getSensors() {
-      let assignedUrl = "https://localhost:7220/api/Sensors"
-      let assignedResponse = await axios.get(assignedUrl)
-      this.sensorArray = assignedResponse.data
-      let unassignedUrl = "https://localhost:7220/api/Sensors?unassigned=true"
-      let unassginedResponse = await axios.get(unassignedUrl)
-      this.unassignedArray = unassginedResponse.data
-      this.$emit("updateSensors", this.sensorArray, this.unassignedArray)
+      let assignedUrl = "https://localhost:7220/api/Sensors";
+      let assignedResponse = await axios.get(assignedUrl);
+      this.sensorArray = assignedResponse.data;
+      let unassignedUrl = "https://localhost:7220/api/Sensors?unassigned=true";
+      let unassginedResponse = await axios.get(unassignedUrl);
+      this.unassignedArray = unassginedResponse.data;
+      this.$emit("updateSensors", this.sensorArray, this.unassignedArray);
     },
     async getKeys() {
-      let url = "https://localhost:7220/api/Keys"
-      let response = await axios.get(url)
-      this.keyArray = response.data
-      this.$emit("updateKeys", this.keyArray)
+      let url = "https://localhost:7220/api/Keys";
+      let response = await axios.get(url);
+      this.keyArray = response.data;
+      this.$emit("updateKeys", this.keyArray);
     },
     sensorNameByMac(mac: string) {
-      let sensor = this.sensorArray.find((sens) => sens.macAddress === mac)
-      if (!sensor) return mac
-      return sensor.name
+      let sensor = this.sensorArray.find((sens) => sens.macAddress === mac);
+      if (!sensor) return mac;
+      return sensor.name;
     },
     userNameById(id: number) {
-      let user = this.keyArray.find((user) => user.id === id)
-      if (!user) return id
-      return user.name
+      let user = this.keyArray.find((user) => user.id === id);
+      if (!user) return id;
+      return user.name;
     },
-    async getAll(){
-      await this.getReadings()
-      await this.getSensors()
-      await this.getKeys()
+    async getAll() {
+      await this.getReadings();
+      await this.getSensors();
+      await this.getKeys();
     },
-    async filterByLock(){
-      if(!this.filterByLockString){
-        this.filteredReadingArray = this.readingArray
+    async filterByLock() {
+      if (!this.filterByLockString) {
+        this.filteredReadingArray = this.readingArray;
         return;
       }
-      const filteredLocks = this.sensorArray.filter(sensor => {
-        return sensor.name.toLowerCase().includes(this.filterByLockString.toLowerCase())
-      })
+      const filteredLocks = this.sensorArray.filter((sensor) => {
+        return sensor.name
+          .toLowerCase()
+          .includes(this.filterByLockString.toLowerCase());
+      });
 
-      const matchArray: readingType[] = []
-      this.readingArray.forEach(reading => {
-        filteredLocks.forEach(lock => {
-          if(lock.macAddress === reading.macAddressSensor) matchArray.push(reading)
-        })
-      })
-      this.filteredReadingArray = matchArray
+      const matchArray: readingType[] = [];
+      this.readingArray.forEach((reading) => {
+        filteredLocks.forEach((lock) => {
+          if (lock.macAddress === reading.macAddressSensor)
+            matchArray.push(reading);
+        });
+      });
+      this.filteredReadingArray = matchArray;
     },
-    async filterByUser(){
-      if(!this.filterByUserString){
-        this.filteredReadingArray = this.readingArray
+    async filterByUser() {
+      if (!this.filterByUserString) {
+        this.filteredReadingArray = this.readingArray;
         return;
       }
-      const filteredUsers = this.keyArray.filter(key => {
-        return key.name.toLowerCase().includes(this.filterByUserString.toLowerCase())
-      })
+      const filteredUsers = this.keyArray.filter((key) => {
+        return key.name
+          .toLowerCase()
+          .includes(this.filterByUserString.toLowerCase());
+      });
 
-      const matchArray: readingType[] = []
-      this.readingArray.forEach(reading => {
-        filteredUsers.forEach(user => {
-          if(user.id === reading.openedBy) matchArray.push(reading)
-        })
-      })
-      this.filteredReadingArray = matchArray
-    }
+      const matchArray: readingType[] = [];
+      this.readingArray.forEach((reading) => {
+        filteredUsers.forEach((user) => {
+          if (user.id === reading.openedBy) matchArray.push(reading);
+        });
+      });
+      this.filteredReadingArray = matchArray;
+    },
   },
   async mounted() {
     if (!this.readingArray.length) {
-      await this.getAll()
-      console.log("Getting all data")
+      await this.getAll();
+      console.log("Getting all data");
     }
-    this.filteredReadingArray = this.readingArray
+    this.filteredReadingArray = this.readingArray;
   },
   props: {
     readings: {
@@ -200,5 +214,5 @@ export default defineComponent({
     },
   },
   computed: {},
-})
+});
 </script>

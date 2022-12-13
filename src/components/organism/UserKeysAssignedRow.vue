@@ -21,14 +21,14 @@
   </td>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue"
-import type { PropType } from "vue"
-import type { keyType } from "../../types/keyType"
+import { defineComponent } from "vue";
+import type { PropType } from "vue";
+import type { keyType } from "../../types/keyType";
 export default defineComponent({
   data() {
     return {
       key: this.keyObj,
-    }
+    };
   },
   props: {
     keyObj: {
@@ -36,10 +36,10 @@ export default defineComponent({
       type: Object as PropType<keyType>,
     },
   },
-  methods:{
-    deleteKey(){
-        this.$emit("deleteKey", this.key)
-    }
-  }
-})
+  methods: {
+    deleteKey() {
+      this.$emit("deleteKey", this.key);
+    },
+  },
+});
 </script>

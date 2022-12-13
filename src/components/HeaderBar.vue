@@ -2,8 +2,7 @@
   <nav class="bg-gray-800">
     <div class="mx-auto max-w-7xl px-2">
       <div class="relative flex h-16 items-center justify-between">
-        <div
-          class="flex flex-1 items-center justify-center">
+        <div class="flex flex-1 items-center justify-center">
           <div class="flex items-center">
             <img class="h-8 w-auto pr-8" src="/locklogo.png" />
           </div>
@@ -22,10 +21,10 @@
                 Readings Page
               </button>
               <button
-              class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-              @click="submitChangeState(3)"
-              :class="{ activeButton: state === 3 }">
-              Sensors Page
+                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                @click="submitChangeState(3)"
+                :class="{ activeButton: state === 3 }">
+                Sensors Page
               </button>
             </div>
           </div>

@@ -27,7 +27,13 @@
                     class="py-3 px-6 text-xs font-medium tracking-wider text-left text-white">
                     Phone
                   </th>
-                  <th></th>
+                  <th>
+                    <button
+                      class="bg-blue-700 text-gray-300 hover:bg-blue-900 hover:text-white px-3 rounded-md text-sm font-medium py-1 w-20"
+                      @click="addNewKey">
+                      Add new
+                    </button>
+                  </th>
                 </tr>
               </thead>
               <tbody class="bg-gray-800 divide-y divide-gray-700">
@@ -35,8 +41,15 @@
                   class="hover:bg-gray-700"
                   v-for="key in keyArray"
                   v-bind:key="key.id">
-                  <UserKeysAssignedRow :keyObj="key" @deleteKey="deleteKey" v-if="key.name !== `Unassigned`"/>
-                  <UserKeysUnassignedRow :keyObj="key" @deleteKey="deleteKey" v-else @updateKey="updateKey"/>
+                  <UserKeysAssignedRow
+                    :keyObj="key"
+                    @deleteKey="deleteKey"
+                    v-if="key.name !== `Unassigned`" />
+                  <UserKeysUnassignedRow
+                    :keyObj="key"
+                    @deleteKey="deleteKey"
+                    v-else
+                    @updateKey="updateKey" />
                 </tr>
               </tbody>
             </table>
@@ -48,10 +61,10 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import type { PropType } from "vue"
+import type { PropType } from "vue";
 import type { keyType } from "../types/keyType";
-import  UserKeysAssignedRow  from "../components/organism/UserKeysAssignedRow.vue"
-import  UserKeysUnassignedRow  from "../components/organism/UserKeysUnassignedRow.vue"
+import UserKeysAssignedRow from "../components/organism/UserKeysAssignedRow.vue";
+import UserKeysUnassignedRow from "../components/organism/UserKeysUnassignedRow.vue";
 import axios from "axios";
 export default defineComponent({
   data() {
@@ -64,35 +77,44 @@ export default defineComponent({
       const url = "https://localhost:7220/api/Keys";
       const response = await axios.get(url);
       this.keyArray = response.data;
-      this.$emit("updateKeys", this.keyArray)
+      this.$emit("updateKeys", this.keyArray);
     },
-    async deleteKey(keyToDel: keyType){
-      const url = `https://localhost:7220/api/Keys/${keyToDel.id}`
-      const response = await axios.delete(url)
-      await this.getKeys()
+    async deleteKey(keyToDel: keyType) {
+      const url = `https://localhost:7220/api/Keys/${keyToDel.id}`;
+      const response = await axios.delete(url);
+      await this.getKeys();
     },
-    async updateKey(keyToUpd: keyType){
-      console.log("UpdateKeys called")
-      const url = `https://localhost:7220/api/Keys/${keyToUpd.id}`
-      const response = await axios.put(url, keyToUpd)
-      await this.getKeys()
-    }
+    async updateKey(keyToUpd: keyType) {
+      const url = `https://localhost:7220/api/Keys/${keyToUpd.id}`;
+      const response = await axios.put(url, keyToUpd);
+      await this.getKeys();
+    },
+    async addNewKey() {
+      const url = `https://localhost:7220/api/Keys/`;
+      const response = await axios.post(url, {
+        id: 0,
+        name: "string",
+        email: "string",
+        phone: "string",
+      });
+      await this.getKeys();
+    },
   },
   mounted() {
-    if(!this.keyArray.length){
-      this.getKeys()
-      console.log("Getting keys")
+    if (!this.keyArray.length) {
+      this.getKeys();
+      console.log("Getting keys");
     }
   },
-  props:{
-    keys:{
+  props: {
+    keys: {
       required: true,
-      type: Object as PropType<keyType[]>
-    }
+      type: Object as PropType<keyType[]>,
+    },
   },
-  components:{
+  components: {
     UserKeysAssignedRow,
-    UserKeysUnassignedRow
-  }
+    UserKeysUnassignedRow,
+  },
 });
 </script>
